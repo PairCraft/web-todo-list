@@ -16,15 +16,32 @@ export class ErrorData {
     status: HttpStatus;
     message: string;
 
-    constructor(status: HttpStatus, message: string){
+    constructor(status: HttpStatus, message: string) {
         this.status = status;
         this.message = message;
     }
 }
 
-export async function fetchData<T>(url?: string, options?: RequestInit): Promise<T | undefined> {
+export async function fetchData<T>(url?: string, options?: RequestInit, isRequireAuth: boolean = false): Promise<T | undefined> {
+
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+    };
+
+    let auth = {};
+    if (isRequireAuth) {
+        const token = localStorage.getItem('token');
+        auth = { Authorization: `Bearer ${token}` };
+    }
+
+    const headers = {
+        ...defaultHeaders,
+        ...options?.headers,
+        ...auth
+    };
+
     try {
-        const response = await fetch(`${BASE_URL}/${url}`, options);
+        const response = await fetch(`${BASE_URL}/${url}`, { ...options, headers });
 
         if (!response.ok) {
             const errorBody = await response.json();

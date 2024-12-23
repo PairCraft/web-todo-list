@@ -283,25 +283,14 @@ function closeDeleteModal() {
 // 유저 할일목록 받기
 async function getUserTodos() {
     try {
-        const response = await fetchData<Todo[]>('todos', {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
+        const response = await fetchData<Todo[]>('todos', {}, true);
 
         if (response) {
             todos = response;
             renderAllTodos();
         }
     } catch (error) {
-        if (error instanceof ErrorData) {
-            if (error.status === HttpStatus.UNAUTHORIZED)
-                window.location.href = './login.html';
-            else
-                alert(error.message);
-        }
-        else
-            alert(`unhandled error ${error}`);
+        handleError(error);
     }
 }
 
@@ -313,12 +302,8 @@ async function addUserTodo(title: string) {
     try {
         const response = await fetchData<Todo>('todos', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
             body: JSON.stringify(request)
-        });
+        }, true);
 
         if (response) {
             todoInput.value = '';
@@ -327,14 +312,7 @@ async function addUserTodo(title: string) {
             renderTodoItem(newTodo);
         }
     } catch (error) {
-        if (error instanceof ErrorData) {
-            if (error.status === HttpStatus.UNAUTHORIZED)
-                window.location.href = './login.html';
-            else
-                alert(error.message);
-        }
-        else
-            alert(`unhandled error ${error}`);
+        handleError(error);
     }
 }
 
@@ -343,10 +321,7 @@ async function updateTodoStatus(id: number) {
     try {
         let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
+        }, true);
 
         if (response) {
             const index = todos.findIndex(todo => todo.id === response.id);
@@ -356,14 +331,7 @@ async function updateTodoStatus(id: number) {
             }
         }
     } catch (error) {
-        if (error instanceof ErrorData) {
-            if (error.status === HttpStatus.UNAUTHORIZED)
-                window.location.href = './login.html';
-            else
-                alert(error.message);
-        }
-        else
-            alert(`unhandled error ${error}`);
+        handleError(error);
     }
 }
 
@@ -375,12 +343,8 @@ async function updateTodoTitle(id: number, title: string) {
     try {
         let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
             body: JSON.stringify(request)
-        });
+        }, true);
 
         if (response) {
             const index = todos.findIndex(todo => todo.id === response.id);
@@ -390,14 +354,7 @@ async function updateTodoTitle(id: number, title: string) {
             }
         }
     } catch (error) {
-        if (error instanceof ErrorData) {
-            if (error.status === HttpStatus.UNAUTHORIZED)
-                window.location.href = './login.html';
-            else
-                alert(error.message);
-        }
-        else
-            alert(`unhandled error ${error}`);
+        handleError(error);
     }
 }
 
@@ -406,23 +363,24 @@ async function deleteTodo(id: number) {
     try {
         await fetchData(`todos/${id}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
+        }, true);
 
         todos = todos.filter(todo => todo.id !== id);
         removeTodoItemFromDOM(id);
     } catch (error) {
-        if (error instanceof ErrorData) {
-            if (error.status === HttpStatus.UNAUTHORIZED)
-                window.location.href = './login.html';
-            else
-                alert(error.message);
-        }
-        else
-            alert(`unhandled error ${error}`);
+        handleError(error);
     }
+}
+
+function handleError(error: unknown) {
+    if (error instanceof ErrorData) {
+        if (error.status === HttpStatus.UNAUTHORIZED)
+            window.location.href = './login.html';
+        else
+            alert(error.message);
+    }
+    else
+        alert(`unhandled error ${error}`);
 }
 
 getUserTodos();
