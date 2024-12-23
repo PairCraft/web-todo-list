@@ -55,7 +55,6 @@ async function requestLogin(id: string, password: string) {
 
         if (response) {
             alert(`${response.username}님 환영합니다!`);
-            localStorage.setItem('token', response.token);
             window.location.href = './index.html';
         }
     } catch (error) {

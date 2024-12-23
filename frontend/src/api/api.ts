@@ -22,22 +22,15 @@ export class ErrorData {
     }
 }
 
-export async function fetchData<T>(url?: string, options?: RequestInit, isRequireAuth: boolean = false): Promise<T | undefined> {
+export async function fetchData<T>(url?: string, options?: RequestInit): Promise<T | undefined> {
 
     const defaultHeaders = {
         'Content-Type': 'application/json',
     };
 
-    let auth = {};
-    if (isRequireAuth) {
-        const token = localStorage.getItem('token');
-        auth = { Authorization: `Bearer ${token}` };
-    }
-
     const headers = {
         ...defaultHeaders,
         ...options?.headers,
-        ...auth
     };
 
     try {

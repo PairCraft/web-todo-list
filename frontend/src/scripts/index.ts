@@ -283,7 +283,9 @@ function closeDeleteModal() {
 // 유저 할일목록 받기
 async function getUserTodos() {
     try {
-        const response = await fetchData<Todo[]>('todos', {}, true);
+        const response = await fetchData<Todo[]>('todos', {
+            credentials: 'include'
+        });
 
         if (response) {
             todos = response;
@@ -302,8 +304,9 @@ async function addUserTodo(title: string) {
     try {
         const response = await fetchData<Todo>('todos', {
             method: 'POST',
-            body: JSON.stringify(request)
-        }, true);
+            body: JSON.stringify(request),
+            credentials: 'include'
+        });
 
         if (response) {
             todoInput.value = '';
@@ -321,7 +324,8 @@ async function updateTodoStatus(id: number) {
     try {
         let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PATCH',
-        }, true);
+            credentials: 'include'
+        });
 
         if (response) {
             const index = todos.findIndex(todo => todo.id === response.id);
@@ -343,8 +347,9 @@ async function updateTodoTitle(id: number, title: string) {
     try {
         let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PUT',
-            body: JSON.stringify(request)
-        }, true);
+            body: JSON.stringify(request),
+            credentials: 'include'
+        });
 
         if (response) {
             const index = todos.findIndex(todo => todo.id === response.id);
@@ -363,7 +368,8 @@ async function deleteTodo(id: number) {
     try {
         await fetchData(`todos/${id}`, {
             method: 'DELETE',
-        }, true);
+            credentials: 'include'
+        });
 
         todos = todos.filter(todo => todo.id !== id);
         removeTodoItemFromDOM(id);
