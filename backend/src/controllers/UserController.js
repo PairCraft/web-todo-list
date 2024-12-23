@@ -32,6 +32,15 @@ class UserController {
       const { username, password } = req.body;
       const result = await UserController.userService.login(username, password);
 
+      res.cookie("token", result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: "None",
+      });
+
+      delete result.token;
+
       res.json(result);
     } catch (error) {
       next(error);

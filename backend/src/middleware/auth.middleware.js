@@ -9,7 +9,8 @@ const userRepository = UserRepositoryFactory.createRepository();
 const authMiddleware = {
   authenticate: async (req, res, next) => {
     try {
-      const token = req.headers.authorization?.split(" ")[1];
+      const token = req.cookies.token;
+      console.log("token: ", token);
       if (!token) {
         return res
           .status(StatusCodes.UNAUTHORIZED)
